@@ -1,4 +1,4 @@
-name: github
+name: build CI with github actions
 
 on:
   push:
