@@ -1,0 +1,30 @@
+{
+  "name": "argocd-node-app",
+  "version": "1.0.0",
+  "description": "A repository for building docker images, pushing to docker hub, and implementing continuous integration with github actions.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MdShimulMahmud/argocd-node-app.git"
+  },
+  "keywords": [
+    "argocd"
+  ],
+  "author": "Md. Shimul Mahmud",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MdShimulMahmud/argocd-node-app/issues"
+  },
+  "homepage": "https://github.com/MdShimulMahmud/argocd-node-app#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
