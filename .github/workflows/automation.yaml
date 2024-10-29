@@ -52,7 +52,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}
+            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.run_number }}
   deploy:
     runs-on: ubuntu-latest
     needs: docker
@@ -73,7 +73,7 @@ jobs:
           cat argocd-app/argocd-deployment.yml
           # Commit and push changes
           git add argocd-app/argocd-deployment.yml
-          git commit -m "Update image tag to ${{ github.run_number }}"
+          git commit -m "Update image tag to v${{ github.run_number }}"
           git push origin master
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
