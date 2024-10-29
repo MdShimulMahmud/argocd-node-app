@@ -34,12 +34,14 @@ jobs:
           git config user.email "${{ secrets.GIT_EMAIL }}"
           git config user.name "${{ secrets.GIT_USERNAME }}"
 
-          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.RUN_NUMBER }}|g" argocd-app/argocd-deployment.yml
+          # Update the image tag using DOCKER_USERNAME
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.event.workflow_run.outputs.run_number }}|g" argocd-app/argocd-deployment.yml
+
 
           cat argocd-app/argocd-deployment.yml
 
           git add argocd-app/argocd-deployment.yml
-          git commit -m "Update image tag to v${{ env.RUN_NUMBER }}"
+          git commit -m "Update image tag to v${{ github.event.workflow_run.outputs.run_number }}"
           git push origin master
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}

@@ -9,6 +9,7 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    needs: build  # Ensure this job runs after the build job
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,4 +40,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.RUN_NUMBER }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ needs.build.outputs.run_number }}  # Use run_number from the build job
