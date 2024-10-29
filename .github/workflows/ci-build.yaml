@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      run_number: ${{ github.run_number }}  # Define output variable
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,10 +28,5 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Set run number
-        id: set_run_number
-        run: echo "RUN_NUMBER=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
-
       - name: Debug Run Number
-        run: echo "Current Run Number = $RUN_NUMBER"
-
+        run: echo "Current Run Number = ${{ github.run_number }}"
