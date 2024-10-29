@@ -15,6 +15,8 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    outputs:
+      run_number: ${{ github.run_number }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,4 +36,4 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}
+            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ {{ github.event.workflow_run.run_number }} }}
