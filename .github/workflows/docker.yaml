@@ -32,3 +32,46 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:latest
             ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}
+  modifygit:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deployment repository
+        uses: actions/checkout@v4
+        with:
+          repository: '${{secrets.GIT_USERNAME}}/argocd-node-app'
+          token: ${{ secrets.GITHUB_PASSWORD }}
+          ref: master
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config user.email "${{secrets.GIT_EMAIL}}"
+          git config user.name "${{secrets.GIT_USERNAME}}"
+
+      - name: Update deployment manifest
+        run: |
+          if [ -f argocd-app/argocd-deployment.yml ]; then
+            # Backup the file
+            cp argocd-app/argocd-deployment.yml argocd-app/argocd-deployment.yml.bak
+            
+            # Update the image tag
+            sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/argocd-node-app:.*|image: ${{secrets.DOCKER_USERNAME}}/argocd-node-app:${{ github.run_number }}|g" argocd-app/argocd-deployment.yml
+            
+            # Verify the change
+            if ! diff argocd-app/argocd-deployment.yml argocd-app/argocd-deployment.yml.bak > /dev/null; then
+              echo "Manifest updated successfully"
+              
+              # Commit and push changes
+              git add argocd-app/argocd-deployment.yml
+              git commit -m "Update image tag to run #${{ github.run_number }}"
+              git push origin master
+            else
+              echo "No changes needed in manifest"
+            fi
+          else
+            echo "Error: Deployment manifest not found at expected path"
+            exit 1
+          fi
+        env:
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_PASSWORD }}
