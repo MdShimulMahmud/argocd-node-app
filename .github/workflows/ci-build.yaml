@@ -1,4 +1,4 @@
-name: Build CI with GitHub Actions
+name: Build CI with github actions
 
 on:
   push:
@@ -11,8 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      run_number: ${{ github.run_number }}  # Capture the run_number
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
