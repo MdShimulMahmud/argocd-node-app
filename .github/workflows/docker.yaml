@@ -32,32 +32,31 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:latest
             ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}
-            
+
   modifygit:
-  needs: docker
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
-      name: Checkout infrastructure repo
-      with:
-        repository: 'MdShimulMahmud/argocd-infra-repo'
-        token: ${{ secrets.GIT_TOKEN }}
-        ref: master
-        
-    - name: Update deployment image tag
-      run: |
-        git config user.email "${{secrets.GIT_EMAIL}}"
-        git config user.name "${{secrets.GIT_USERNAME}}"
-        
-        # Update the image tag using DOCKER_USERNAME
-        sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}|g" argocd-app/argocd-deployment.yml
-        
-        # Show the changes for verification
-        cat argocd-app/argocd-deployment.yml
-        
-        # Commit and push changes
-        git add argocd-app/argocd-deployment.yml
-        git commit -m "Update image tag to ${{ github.run_number }} [skip ci]"
-        git push origin master
-      env:
-        GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout infrastructure repo
+        uses: actions/checkout@v3
+        with:
+          repository: 'MdShimulMahmud/argocd-infra-repo'
+          token: ${{ secrets.GIT_TOKEN }}
+          ref: master
+      - name: Update deployment image tag
+        run: |
+          git config user.email "${{secrets.GIT_EMAIL}}"
+          git config user.name "${{secrets.GIT_USERNAME}}"
+          
+          # Update the image tag using DOCKER_USERNAME
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}|g" argocd-app/argocd-deployment.yml
+          
+          # Show the changes for verification
+          cat argocd-app/argocd-deployment.yml
+          
+          # Commit and push changes
+          git add argocd-app/argocd-deployment.yml
+          git commit -m "Update image tag to ${{ github.run_number }} [skip ci]"
+          git push origin master
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
