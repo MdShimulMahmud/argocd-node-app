@@ -21,5 +21,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          tags: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{github.sha256}}
+          context: .
+          tags: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{steps.meta.outputs.tags}}
           push: true
