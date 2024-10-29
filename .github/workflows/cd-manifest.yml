@@ -1,4 +1,3 @@
-# .github/workflows/modifygit.yml
 name: Modify Git Deployment File
 
 on:
@@ -8,13 +7,13 @@ on:
       - completed
 
 jobs:
-  modifygit:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout infrastructure repo
         uses: actions/checkout@v3
         with:
-          repository: 'MdShimulMahmud/argocd-infra-repo'
+          repository: '${{secrets.GIT_USERNAME}}/argocd-infra-repo'
           token: ${{ secrets.GIT_TOKEN }}
           ref: master
 
