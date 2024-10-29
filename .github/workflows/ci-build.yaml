@@ -1,32 +1,32 @@
-name: Build CI with GitHub Actions
+# name: Build CI with GitHub Actions
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - master
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      run_number: ${{ github.run_number }}  # Capture the run_number
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       run_number: ${{ github.run_number }}  # Capture the run_number
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "23.x"
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: "23.x"
 
-      - name: Install dependencies
-        run: npm install
+#       - name: Install dependencies
+#         run: npm install
 
-      - name: Run build
-        run: npm run build
+#       - name: Run build
+#         run: npm run build
 
-      - name: Debug Run Number
-        run: echo "Current Run Number = ${{ github.run_number }}"
+#       - name: Debug Run Number
+#         run: echo "Current Run Number = ${{ github.run_number }}"
