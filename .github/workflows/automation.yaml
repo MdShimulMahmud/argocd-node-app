@@ -20,7 +20,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "23.x"
+          node-version: "23.0.0"
 
       - name: Install dependencies
         run: npm install
@@ -68,7 +68,7 @@ jobs:
           git config user.email "${{secrets.GIT_EMAIL}}"
           git config user.name "${{secrets.GIT_USERNAME}}"
           # Update the image tag using DOCKER_USERNAME
-          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{ github.run_number }}|g" argocd-app/argocd-deployment.yml
+          sed -i "s|image: ${secrets.DOCKER_USERNAME}/argocd-node-app:v[0-9]*|image: ${secrets.DOCKER_USERNAME}/argocd-node-app:v${github.run_number}|g" argocd-app/argocd-deployment.yml
           # Show the changes for verification
           cat argocd-app/argocd-deployment.yml
           # Commit and push changes
