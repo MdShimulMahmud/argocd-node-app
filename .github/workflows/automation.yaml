@@ -67,10 +67,13 @@ jobs:
         run: |
           git config user.email "${{secrets.GIT_EMAIL}}"
           git config user.name "${{secrets.GIT_USERNAME}}"
+
           # Update the image tag using DOCKER_USERNAME
-          sed -i "s|image: ${secrets.DOCKER_USERNAME}/argocd-node-app:v[0-9]*|image: ${secrets.DOCKER_USERNAME}/argocd-node-app:v${github.run_number}|g" argocd-app/argocd-deployment.yml
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.run_number }}|g" argocd-app/argocd-deployment.yml
+         
           # Show the changes for verification
           cat argocd-app/argocd-deployment.yml
+          
           # Commit and push changes
           git add argocd-app/argocd-deployment.yml
           git commit -m "Update image tag to v${{ github.run_number }}"
