@@ -8,7 +8,7 @@ on:
     branches:
       - master
   workflow_run:
-    workflows: ["Build CI with github actions"]
+    workflows: ["Build CI with GitHub Actions"]
     types:
       - completed
 
@@ -34,4 +34,4 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.run_number }}  # Use the environment variable

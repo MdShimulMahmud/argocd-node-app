@@ -1,4 +1,4 @@
-name: Build CI with github actions
+name: Build CI with GitHub Actions
 
 on:
   push:
@@ -25,3 +25,7 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+      - name: Set run number output
+        id: set-output
+        run: echo "run_number=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
