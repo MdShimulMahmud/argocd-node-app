@@ -22,18 +22,15 @@ jobs:
           git config user.email "${{ secrets.GIT_EMAIL }}"
           git config user.name "${{ secrets.GIT_USERNAME }}"
 
-          # Capture the run number from the environment variable
-          RUN_NUMBER=${{ env.run_number }}
-
           # Update the image tag using DOCKER_USERNAME
-          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${RUN_NUMBER}*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${RUN_NUMBER}|g" argocd-app/argocd-deployment.yml
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{env.RUN_NUMBER}}*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.RUN_NUMBER }}|g" argocd-app/argocd-deployment.yml
 
           # Show the changes for verification
           cat argocd-app/argocd-deployment.yml
 
           # Commit and push changes
           git add argocd-app/argocd-deployment.yml
-          git commit -m "Update image tag to v${RUN_NUMBER}"
+          git commit -m "Update image tag to v${{ env.RUN_NUMBER }}"
           git push origin master
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}

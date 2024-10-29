@@ -26,6 +26,10 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Set run number output
-        id: set-output
-        run: echo "run_number=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+      - name: Set run number
+        id: set_run_number
+        run: echo "RUN_NUMBER=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+        
+      - name: Debug Run Number
+        run: echo "Current Run Number: $RUN_NUMBER"
+

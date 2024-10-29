@@ -33,5 +33,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.run_number }}  # Use the environment variable
+          tags: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.RUN_NUMBER }}  # Use the RUN_NUMBER from the environment variable
