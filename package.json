@@ -2,7 +2,7 @@
   "name": "argocd-node-app",
   "version": "1.0.0",
   "description": "A repository for building docker images, pushing to docker hub, and implementing continuous integration with github actions.",
-  "main": "index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
@@ -25,6 +25,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "http-errors": "^2.0.0",

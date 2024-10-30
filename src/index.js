@@ -1,11 +1,14 @@
+import dotenv from "dotenv";
+
 import express from "express";
 import fs from "fs";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -39,5 +42,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`url: http://localhost:${PORT}`);
+  console.log(`URL: http://localhost:${PORT}`);
 });

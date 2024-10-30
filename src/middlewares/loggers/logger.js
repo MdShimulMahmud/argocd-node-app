@@ -4,7 +4,11 @@ const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
     winston.format.timestamp(),
-    winston.format.json()
+    winston.format.json(),
+    winston.format.colorize({ all: true }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.prettyPrint()
   ),
   transports: [
     new winston.transports.File({ filename: "error.log", level: "error" }),

@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - "test/**"
+      - "scripts/**"
+      - "**/*.log"
   pull_request:
     branches:
       - master
