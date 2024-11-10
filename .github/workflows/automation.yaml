@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       has_new_version: ${{ steps.check.outputs.has_new_version }}
+      current_version: ${{ steps.check.outputs.current_version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -35,7 +36,7 @@ jobs:
         id: get_previous_version
         run: |
           # Extract the version tag from the current image line in argocd-deployment.yml
-          previous_version=$(grep -oP 'argocd-node-app:v\K[0-9]+' infra-repo/argocd-app/argocd-deployment.yml)
+          previous_version=$(grep -oP 'argocd-node-app:\K(v[0-9]+)' infra-repo/argocd-app/argocd-deployment.yml)
           echo "Previous version: $previous_version"
           echo "previous_version=$previous_version" >> $GITHUB_ENV
 
@@ -45,6 +46,7 @@ jobs:
           # Read the current version from the VERSION file
           current_version=$(cat VERSION)
           echo "Current version: $current_version"
+          echo "current_version=$current_version" >> $GITHUB_ENV
 
           # Compare with previous version
           if [ "$current_version" != "$previous_version" ]; then
@@ -56,6 +58,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    if: ${{ needs.check-version.outputs.has_new_version == 'true' }}
     outputs:
       run_number: ${{ github.run_number }} # Capture the run_number
     steps:
@@ -79,6 +82,9 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     needs: build
+    env:
+      current_version: ${{ needs.check-version.outputs.current_version }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -98,11 +104,13 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.run_number }}
+            ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ env.current_version }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: docker
+    env:
+      current_version: ${{ needs.check-version.outputs.current_version }}
     steps:
       - name: Checkout infrastructure repo
         uses: actions/checkout@v3
@@ -117,14 +125,14 @@ jobs:
           git config user.name "${{secrets.GIT_USERNAME}}"
 
           # Update the image tag using DOCKER_USERNAME
-          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.run_number }}|g" argocd-app/argocd-deployment.yml
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:${{env.current_version}}|g" argocd-app/argocd-deployment.yml
 
           # Show the changes for verification
           cat argocd-app/argocd-deployment.yml
 
           # Commit and push changes
           git add argocd-app/argocd-deployment.yml
-          git commit -m "Update image tag to v${{ github.run_number }}"
+          git commit -m "Update image tag to v${{ env.current_version }}"
           git push origin master
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
