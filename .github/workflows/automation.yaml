@@ -15,6 +15,45 @@ on:
       - master
 
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      has_new_version: ${{ steps.check.outputs.has_new_version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Checkout infrastructure repo
+        uses: actions/checkout@v3
+        with:
+          repository: "MdShimulMahmud/argocd-infra-repo"
+          path: infra-repo
+          token: ${{ secrets.GIT_TOKEN }}
+          ref: master
+
+      - name: Extract previous version from infra repo
+        id: get_previous_version
+        run: |
+          # Extract the version tag from the current image line in argocd-deployment.yml
+          previous_version=$(grep -oP 'argocd-node-app:v\K[0-9]+' infra-repo/argocd-app/argocd-deployment.yml)
+          echo "Previous version: $previous_version"
+          echo "previous_version=$previous_version" >> $GITHUB_ENV
+
+      - name: Check current version
+        id: check
+        run: |
+          # Read the current version from the VERSION file
+          current_version=$(cat VERSION)
+          echo "Current version: $current_version"
+
+          # Compare with previous version
+          if [ "$current_version" != "$previous_version" ]; then
+            echo "New version detected"
+            echo "has_new_version=true" >> $GITHUB_ENV
+          else
+            echo "No new version, skipping build"
+            echo "has_new_version=false" >> $GITHUB_ENV
+
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -36,6 +75,7 @@ jobs:
 
       - name: Debug Run Number
         run: echo "Current Run Number = ${{ github.run_number }}"
+
   docker:
     runs-on: ubuntu-latest
     needs: build
@@ -59,6 +99,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/argocd-node-app:v${{ github.run_number }}
+
   deploy:
     runs-on: ubuntu-latest
     needs: docker
