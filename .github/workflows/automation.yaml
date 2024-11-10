@@ -46,15 +46,18 @@ jobs:
           # Read the current version from the VERSION file
           current_version=$(cat VERSION)
           echo "Current version: $current_version"
-          echo "current_version=$current_version" >> $GITHUB_ENV
 
-          # Compare with previous version
+          # Set the outputs for current_version and has_new_version
+          echo "::set-output name=current_version::$current_version"
+
+          # Compare with previous version from the deployment file
           if [ "$current_version" != "$previous_version" ]; then
             echo "New version detected"
-            echo "has_new_version=true" >> $GITHUB_ENV
+            echo "::set-output name=has_new_version::true"
           else
             echo "No new version, skipping build"
-            echo "has_new_version=false" >> $GITHUB_ENV
+            echo "::set-output name=has_new_version::false"
+          fi
 
   build:
     runs-on: ubuntu-latest
