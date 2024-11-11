@@ -140,7 +140,7 @@ jobs:
 
           # Commit and push changes
           git add argocd-app/argocd-deployment.yml
-          git commit -m "Update image tag to v${{ env.current_version }}"
+          git commit -m "Update image tag to ${{ env.current_version }}"
           git push origin master
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
